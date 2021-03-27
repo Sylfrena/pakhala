@@ -10,6 +10,14 @@ impl Token <'_> {
     pub fn new_token<'a>(tok_type: TokenType<'a>, ch: &'a str) -> Token<'a> {
         Token{token_type:tok_type, literal: ch}
     }
+
+    pub fn look_ident(s: &str)-> TokenType {
+        match s {
+            "let" => LET,
+            "def" => FUNCTION,
+            _ => IDENT
+        }
+    }
 }
 
 pub const ILLEGAL: TokenType = "ILLEGAL";
