@@ -16,7 +16,7 @@ pub const ILLEGAL: TokenType = "ILLEGAL";
 pub const EOF: TokenType = "EOF";
 
 //Identifiers
-  
+
 pub const IDENT: TokenType = "IDENTIFIER";
 pub const INT: TokenType = "INT";
 pub const FLOAT: TokenType = "FLOAT";
@@ -50,5 +50,6 @@ pub const RCURLY: TokenType = "}" ;
 
 //Keywords
 pub const FUNCTION: TokenType = "def" ;
+pub const LET: TokenType = "let";
 //SAY: TokenType ='SAY'
 
