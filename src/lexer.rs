@@ -43,6 +43,8 @@ impl Lexer <'_> {
         "0" <= self.ch && self.ch <= "9"
     }
 
+
+
    fn read_char(&mut self) {
        if self.read_position >= (self.input).len().try_into().unwrap() {
            println!("ghusraha hai");
@@ -56,6 +58,16 @@ impl Lexer <'_> {
        println!("moi her too");
        self.position = self.read_position;
        self.read_position += 1;
+   }
+
+   fn peek_char(&mut self) -> &str{
+       if self.read_position >= (self.input).len().try_into().unwrap() {
+           "\0"
+       } else {
+        let ch_byte = self.input.as_bytes();
+        let mut pos = self.read_position as usize;
+        from_utf8(&ch_byte[pos..pos+1]).unwrap()
+       }
    }
 
    fn read_identifier(&mut self) -> &str{
@@ -99,7 +111,28 @@ impl Lexer <'_> {
         ")" => token::Token::new_token(token::RPAREN, self.ch),
         "," => token::Token::new_token(token::COMMA, self.ch),
         "+" => token::Token::new_token(token::PLUS, self.ch),
-        "=" => token::Token::new_token(token::ASSIGN, self.ch),
+        "=" => if self.peek_char() == "=" {
+                   let _ch: &'a str = self.ch;
+                   //workaround because whole host of borrowing problems
+                   //if i try to concatenate the way in the book
+                   //everything requires kinda &(String) which is illegal
+                   self.read_char();
+                   //let n =
+                   //let n: &'a str = (ch.to_string() + self.ch);//format!("{}{}",ch, self.ch);
+                   token::Token{
+                        token_type: token::EQ,
+                        literal: "=="}
+                } else {
+                    token::Token::new_token(token::ASSIGN, self.ch)
+                },
+        "!" => if self.peek_char() == "=" {
+                    self.read_char();
+                    token::Token{
+                        token_type: token::NOT_EQ,
+                        literal: "!="}
+                } else {
+                    token::Token::new_token(token::BANG, self.ch)
+                },
         "\0" => token::Token::new_token(token::EOF, ""),
         _ => if self.is_letter() {
                 let lit = self.read_identifier();
@@ -133,7 +166,9 @@ mod tests {
                       let ten = 10;
                       let add = def (x , y );
                       x + y ;
-                      let result = add (five , ten );";
+                      let result = add (five , ten );
+                      10 == 10
+                      10 != 1";
         //same issue here, identifiers still need one space after them
 
         struct Expected <'a> {
@@ -192,6 +227,14 @@ mod tests {
             Expected{expected_type: token::IDENT, expected_literal: "ten"},
             Expected{expected_type: token::RPAREN, expected_literal: ")"},
             Expected{expected_type: token::SEMICOLON, expected_literal: ";"},
+
+            Expected{expected_type: token::INT, expected_literal: "10"},
+            Expected{expected_type: token::EQ, expected_literal: "=="},
+            Expected{expected_type: token::INT, expected_literal: "10"},
+
+            Expected{expected_type: token::INT, expected_literal: "10"},
+            Expected{expected_type: token::NOT_EQ, expected_literal: "!="},
+            Expected{expected_type: token::INT, expected_literal: "1"},
 
             Expected{expected_type: token::EOF, expected_literal: ""}
         ];

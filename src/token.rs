@@ -55,6 +55,9 @@ pub const LSQUARE: TokenType = "[" ;
 pub const RSQUARE: TokenType = "]" ;
 pub const LCURLY: TokenType = "{" ;
 pub const RCURLY: TokenType = "}" ;
+pub const BANG: TokenType = "!";
+pub const EQ: TokenType = "==";
+pub const NOT_EQ: TokenType = "!=";
 
 //Keywords
 pub const FUNCTION: TokenType = "def" ;
