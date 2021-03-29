@@ -63,7 +63,19 @@ impl Lexer <'_> {
        while self.is_letter() {
            self.read_char()
        }
-       //let goo = self.input.clone();
+
+       let input_byte = self.input.as_bytes();
+       from_utf8(&input_byte[position as usize..self.position as usize])
+            .unwrap()
+   }
+
+   fn read_number(&mut self) -> &str{
+       let mut position = self.position;
+       while self.is_digit() {
+           self.read_char()
+       }
+
+       self.read_position = self.read_position - 1;
        let input_byte = self.input.as_bytes();
        from_utf8(&input_byte[position as usize..self.position as usize])
             .unwrap()
@@ -78,6 +90,7 @@ impl Lexer <'_> {
 
    fn next_token<'a>(&'a mut self) -> token::Token {
       println!("self.ch is{}", self.ch);
+
       self.consume_whitespace();
       let mut tok = match self.ch {
         "-" => token::Token::new_token(token::MINUS, self.ch),
@@ -89,37 +102,20 @@ impl Lexer <'_> {
         "=" => token::Token::new_token(token::ASSIGN, self.ch),
         "\0" => token::Token::new_token(token::EOF, ""),
         _ => if self.is_letter() {
-                let blah = {
-                    let mut position = self.position;
-                    while self.is_letter() {
-                        self.read_char()
-                    }
-                    //self.read_position = self.read_position - 1;
-                    let input_byte = self.input.as_bytes();
-                    from_utf8(&input_byte[position as usize..self.position as usize])
-                         .unwrap()};
-
+                let lit = self.read_identifier();
                 token::Token{
-                     token_type: token::Token::look_ident(blah),
-                     literal: blah}
+                     token_type: token::Token::look_ident(lit),
+                     literal: lit}
              } else if self.is_digit() {
-                let blah = {
-                    let mut position = self.position;
-                    while self.is_digit() {
-                        self.read_char()
-                    }
-                    self.read_position = self.read_position - 1;
-                    let input_byte = self.input.as_bytes();
-                    from_utf8(&input_byte[position as usize..self.position as usize])
-                         .unwrap()};
-
-                token::Token{token_type: token::INT,literal: blah}
+                let lit = self.read_number();
+                token::Token{token_type: token::INT,literal: lit}
              } else {
                  token::Token::new_token(token::ILLEGAL, "")
              }
       };
-     self.read_char();
      tok
+     //read_char has not been called here because it confclicts with the self.is_digit and self.is_letter
+     //read_char is called after next_token
    }
 }
 
@@ -204,14 +200,18 @@ mod tests {
         let mut l = Lexer::new(input2);
 
         for tt in test_v{
-            let tok: token::Token = l.next_token();
+            { //since next_token and read_char can't be called in the same scope
+                let tok: token::Token = l.next_token();
 
-            println!("Type guessed by program \t Actual type");
-            println!("{}\t{}", tok.token_type, tt.expected_type);
-            println!("{}now this\t{}", tok.literal, tt.expected_literal);
+                println!("Type guessed by program \t Actual type");
+                println!("{}\t{}", tok.token_type, tt.expected_type);
+                println!("{}now this\t{}", tok.literal, tt.expected_literal);
 
-            assert_eq!(tok.token_type, tt.expected_type);
-            assert_eq!(tok.literal, tt.expected_literal);
+                assert_eq!(tok.token_type, tt.expected_type);
+                assert_eq!(tok.literal, tt.expected_literal);
+            }
+
+            l.read_char();
         }
 
     }
