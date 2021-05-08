@@ -42,7 +42,7 @@ pub const LESS_THAN: TokenType = "<" ;
 //#UNEQUAL_TO: TokenType = '!
 //#AND: TokenType = '&&'
 //#OR: TokenType = '||'
-pub const NOT: TokenType = "!" ;
+//pub const NOT: TokenType = "!" ;
   
 //# Delimiters
 pub const COMMA: TokenType = "," ;

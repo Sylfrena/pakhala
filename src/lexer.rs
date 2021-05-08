@@ -13,7 +13,7 @@ use std::clone::Clone;
 
 //struct InvalidToken;
 
-struct Lexer <'a> {
+pub struct Lexer <'a> {
     input: &'a str,
     position: i32,
     read_position: i32,
@@ -23,7 +23,7 @@ struct Lexer <'a> {
 
 
 impl Lexer <'_> {
-   fn new(input: &str) -> Lexer <'_> {
+   pub fn new(input: &str) -> Lexer <'_> {
        let mut l = Lexer{
              input: input,
              position: 0,
@@ -39,23 +39,27 @@ impl Lexer <'_> {
         self.ch == "_"
     }
 
-    fn is_digit(&self) -> bool {
+   
+   
+   fn is_digit(&self) -> bool {
         "0" <= self.ch && self.ch <= "9"
     }
 
 
 
-   fn read_char(&mut self) {
+   
+   
+   pub fn read_char(&mut self) {
        if self.read_position >= (self.input).len().try_into().unwrap() {
-           println!("ghusraha hai");
+           //println!("read_char mein ghusraha hai");
            self.ch = "\0";
        } else {
            let ch_byte = self.input.as_bytes();
            let mut pos = self.read_position as usize;
            self.ch = from_utf8(&ch_byte[pos..pos+1]).unwrap();
-           println!("ghusraha hai at pos {}",pos);
+           //println!("ghusraha hai at pos {}",pos);
        }
-       println!("moi her too");
+       //println!("moi her too");
        self.position = self.read_position;
        self.read_position += 1;
    }
@@ -100,8 +104,8 @@ impl Lexer <'_> {
         }
    }
 
-   fn next_token<'a>(&'a mut self) -> token::Token {
-      println!("self.ch is{}", self.ch);
+   pub fn next_token<'a>(&'a mut self) -> token::Token {
+      //println!("self.ch is{}", self.ch);
 
       self.consume_whitespace();
       let mut tok = match self.ch {
@@ -109,8 +113,18 @@ impl Lexer <'_> {
         ";" => token::Token::new_token(token::SEMICOLON, self.ch),
         "(" => token::Token::new_token(token::LPAREN, self.ch),
         ")" => token::Token::new_token(token::RPAREN, self.ch),
+        "[" => token::Token::new_token(token::LSQUARE, self.ch),
+        "]" => token::Token::new_token(token::RSQUARE, self.ch),
+        "{" => token::Token::new_token(token::LCURLY, self.ch),
+        "}" => token::Token::new_token(token::RCURLY, self.ch),
+        "?" => token::Token::new_token(token::QUESTION, self.ch),
         "," => token::Token::new_token(token::COMMA, self.ch),
         "+" => token::Token::new_token(token::PLUS, self.ch),
+        "*" => token::Token::new_token(token::MULTIPLY, self.ch),
+        "/" => token::Token::new_token(token::DIVIDE, self.ch),
+        "%" => token::Token::new_token(token::MODULO, self.ch),
+        "<" => token::Token::new_token(token::LESS_THAN, self.ch),
+        ">" => token::Token::new_token(token::GREATER_THAN, self.ch),
         "=" => if self.peek_char() == "=" {
                    let _ch: &'a str = self.ch;
                    //workaround because whole host of borrowing problems
