@@ -10,13 +10,21 @@ impl Token <'_> {
     pub fn new_token<'a>(tok_type: TokenType<'a>, ch: &'a str) -> Token<'a> {
         Token{token_type:tok_type, literal: ch}
     }
+
+    pub fn look_ident(s: &str)-> TokenType {
+        match s {
+            "let" => LET,
+            "def" => FUNCTION,
+            _ => IDENT
+        }
+    }
 }
 
 pub const ILLEGAL: TokenType = "ILLEGAL";
 pub const EOF: TokenType = "EOF";
 
 //Identifiers
-  
+
 pub const IDENT: TokenType = "IDENTIFIER";
 pub const INT: TokenType = "INT";
 pub const FLOAT: TokenType = "FLOAT";
@@ -34,7 +42,7 @@ pub const LESS_THAN: TokenType = "<" ;
 //#UNEQUAL_TO: TokenType = '!
 //#AND: TokenType = '&&'
 //#OR: TokenType = '||'
-pub const NOT: TokenType = "!" ;
+//pub const NOT: TokenType = "!" ;
   
 //# Delimiters
 pub const COMMA: TokenType = "," ;
@@ -47,8 +55,12 @@ pub const LSQUARE: TokenType = "[" ;
 pub const RSQUARE: TokenType = "]" ;
 pub const LCURLY: TokenType = "{" ;
 pub const RCURLY: TokenType = "}" ;
+pub const BANG: TokenType = "!";
+pub const EQ: TokenType = "==";
+pub const NOT_EQ: TokenType = "!=";
 
 //Keywords
 pub const FUNCTION: TokenType = "def" ;
+pub const LET: TokenType = "let";
 //SAY: TokenType ='SAY'
 
