@@ -4,6 +4,7 @@
 mod token;
 mod lexer;
 mod repl;
+mod ast;
 
 
 fn main() { //-> io::Result<()> {
